@@ -13,13 +13,10 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  $Id$
- *
  */
 
-
-#ifndef	_MASTRESAMPLER_H_
-#define	_MASTRESAMPLER_H_
+#ifndef MASTRESAMPLER_H
+#define MASTRESAMPLER_H
 
 #include <sys/types.h>
 #include "MastAudioBuffer.h"
@@ -30,21 +27,21 @@ class MastResampler {
 
 // Constructors
 public:
-	MastResampler( int in_channels, int quality = SRC_SINC_MEDIUM_QUALITY);
-	~MastResampler();
+    MastResampler( int in_channels, int quality = SRC_SINC_MEDIUM_QUALITY);
+    ~MastResampler();
 
 
 // Public methods
-	void resample(MastAudioBuffer *input, MastAudioBuffer *output);
-	
+    void resample(MastAudioBuffer *input, MastAudioBuffer *output);
+
 
 
 private:
-	SRC_STATE* src_state;
-	int channels;
-	double ratio;
+    SRC_STATE* src_state;
+    int channels;
+    double ratio;
 
 };
 
 
-#endif	// _MASTRESAMPLER_H_
+#endif // _MASTRESAMPLER_H_

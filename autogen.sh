@@ -54,8 +54,8 @@ echo "Generating configuration files for $package, please wait...."
 
 # Create the (empty) build directory if it doesn't exist
 if ! [ -d build ]; then
-	echo "  creating build directory"
-	mkdir build
+  echo "  creating build directory"
+  mkdir build
 fi
 
 
@@ -63,11 +63,16 @@ fi
 run_cmd() {
     echo "  running $* ..."
     if ! $*; then
-			echo failed!
-			exit 1
+      echo failed!
+      exit 1
     fi
 }
 
+
+# Because git doesn't support empty directories
+if [ ! -d "$srcdir/build-scripts" ]; then
+  mkdir "$srcdir/build-scripts"
+fi
 
 run_cmd aclocal
 run_cmd autoheader

@@ -9,7 +9,7 @@ man_MANS = \
 	mast_rawrecord.1
 	
 
-HTMLPAGES =  README.html INSTALL.html TODO.html
+HTMLPAGES =  README.html INSTALL.html
 HTMLMANPAGES = $(man_MANS:%=%.html)
 XMLMANPAGES = $(man_MANS:%=%.xml)
 ASCMANPAGES = $(man_MANS:%=%.asc)
@@ -28,22 +28,19 @@ XMLTO = @XMLTO@
 if BUILD_DOC 
 
 INSTALL.html: ../INSTALL
-	$(ASCIIDOC) -d article -b xhtml11 -o $@ $<
+	$(ASCIIDOC) -d article -o $@ $<
 
-README.html: ../README
-	$(ASCIIDOC) -d article -b xhtml11 -o $@ $<
-
-TODO.html: ../TODO
-	$(ASCIIDOC) -d article -b xhtml11 -o $@ $<
+README.html: ../README.md
+	$(ASCIIDOC) -d article -o $@ $<
 
 $(HTMLMANPAGES): %.html: %.asc
-	$(ASCIIDOC) -d manpage -b xhtml11 -o $@ $<
+	$(ASCIIDOC) -d manpage -o $@ $<
 
 $(XMLMANPAGES): %.xml: %.asc
 	$(ASCIIDOC) -d manpage -b docbook -o $@ $<
 
 $(man_MANS): %: %.xml
-	$(XMLTO) man $<
+	$(XMLTO) man --skip-validation $<
 
 endif
 
