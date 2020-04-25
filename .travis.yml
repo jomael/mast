@@ -1,15 +1,14 @@
-dist: trusty
+dist: xenial
 sudo: required
 
 language: c
 
 install:
   - sudo apt-get update -qq
-  - sudo apt-get install -y build-essential libtool pkg-config
-  - sudo apt-get install -y asciidoctor xmlto
-  - sudo apt-get install -y libortp-dev libsndfile1-dev libtwolame-dev libsamplerate0-dev libgsm1-dev
-  - sudo apt-get install -y jackd2 libjack-jackd2-dev 
+  - sudo apt-get install -y build-essential pkg-config check
+  - sudo apt-get install -y autoconf automake libtool
+  - sudo apt-get install -y libsndfile1-dev libsamplerate0-dev
 
 script:
   - ./autogen.sh
-  - make
+  - make check

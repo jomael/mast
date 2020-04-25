@@ -5,7 +5,7 @@ AC_PREREQ(2.57)
 
 dnl ############# Initialisation
 
-AC_INIT([mast], [0.2.3], [njh@aelius.com])
+AC_INIT([mast], [2.0.0], [njh@aelius.com])
 
 AC_CONFIG_SRCDIR(src/mast.h)
 AC_CONFIG_AUX_DIR(build) 
@@ -59,19 +59,8 @@ AM_CONDITIONAL(BUILD_DOC, test x$BUILD_DOC = xYes)
 
 dnl ############## Library Checks
 
-dnl Check for ortp (required)
-PKG_CHECK_MODULES(ORTP, ortp >= 0.22.0, ,
-  [ AC_MSG_ERROR(
-    [ Version 0.22.0 or greater of the oRTP library is required to build MAST.
-    It can be downloaded from http://www.linphone.org/ortp/ ])
-  ]
-)
-
-dnl Check for Secret Rabbit Code (it is optional)
-PKG_CHECK_MODULES(SAMPLERATE, samplerate >= 0.1.2,
-  [ HAVE_LIBSRC="Yes" ],
-  [ HAVE_LIBSRC="No" ]
-)
+AC_CHECK_LIB([m], [log10f])
+AC_CHECK_LIB([mx], [log10f])
 
 dnl Check for libsndfile (it is optional)
 PKG_CHECK_MODULES(SNDFILE, sndfile >= 1.0.0,
@@ -79,33 +68,18 @@ PKG_CHECK_MODULES(SNDFILE, sndfile >= 1.0.0,
   [ HAVE_SNDFILE="No" ]
 )
 
-dnl Check for JACK (it is optional)
-PKG_CHECK_MODULES(JACK, jack,
-  [ HAVE_JACK="Yes" ],
-  [ HAVE_JACK="No" ]
-)
-
-dnl Check for twolame (it is optional)
-PKG_CHECK_MODULES(TwoLAME, twolame >= 0.3.10,
-  [
-    HAVE_TWOLAME="Yes"
-    AC_DEFINE_UNQUOTED( HAVE_TWOLAME, 1, [ Define if libtwolame is available ] )
-  ],
-  [ HAVE_TWOLAME="No" ]
-)
-AM_CONDITIONAL([HAVE_TWOLAME], [test x$HAVE_TWOLAME = xYes])
-
-dnl Check for libgsm (it is optional)
-AC_CHECK_LIB([gsm], [gsm_create],
-  [
-    HAVE_GSM="Yes"
-    AC_DEFINE_UNQUOTED( HAVE_GSM, 1, [ Define if libgsm is available ] )
-  ],
-  [ HAVE_GSM="No" ]
-)
-AM_CONDITIONAL([HAVE_GSM], [test x$HAVE_GSM = xYes])
-
-
+PKG_CHECK_MODULES(CHECK, check >= 0.9.4, have_check="yes", have_check="no")
+if test x"$have_check" = "xyes"; then
+  AC_CHECK_PROG(have_checkmk, [checkmk], [yes], [no])
+  if test x"$have_checkmk" = "xyes"; then
+    AC_DEFINE([HAVE_CHECK], 1, [Define to 1 if check library is available])
+	else
+    AC_MSG_WARN([Command 'checkmk' not found.])
+    AC_MSG_WARN([Download it here: http://micah.cowan.name/projects/checkmk/])
+  fi
+fi
+AM_CONDITIONAL(HAVE_CHECK, test x"$have_check" = "xyes" &&
+                           test x"$have_checkmk" = "xyes")
 
 
 dnl ############## Header Checks
@@ -124,9 +98,6 @@ AC_CHECK_TYPE(u_int8_t, unsigned char)
 
 
 dnl ############## Compiler and Linker Flags
-CFLAGS="$CFLAGS $ORTP_CFLAGS"
-CXXFLAGS="$CFLAGS $ORTP_CFLAGS"
-LDFLAGS="$LDFLAGS $ORTP_LIBS"
 
 if test x$Debugging = xEnabled; then
   CFLAGS="$CFLAGS -g -Wunused -Wall -Werror"
@@ -156,7 +127,7 @@ AC_SUBST(BUILD_PROGRAMS)
 
 dnl ############## Final Output
 
-AC_CONFIG_FILES([Makefile src/Makefile doc/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile tests/Makefile])
 
 AC_OUTPUT
 
@@ -170,11 +141,6 @@ echo "
   Install path ........... $prefix
   Rebuilding Docs ........ $BUILD_DOC
   Debugging .............. $Debugging
-  Jack Support ........... $HAVE_JACK
-  Libsamplerate support .. $HAVE_LIBSRC
-  Libsndfile support ..... $HAVE_SNDFILE
-  Libgsm support ......... $HAVE_GSM
-  MPEG Audio Support ..... $HAVE_TWOLAME
   
 Next type 'make' and then 'make install'."
 

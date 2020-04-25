@@ -5,6 +5,8 @@
 *.la
 *.lo
 *.o
+*.log
+*.trs
 autom4te.cache
 *.m4
 config.guess
@@ -35,9 +37,13 @@ doc/INSTALL.html
 doc/README.html
 
 build/
-mast_cast
-mast_filecast
-mast_info
-mast_rawcast
-mast_rawrecord
-mast_record
+
+# Built binaries
+/src/mast-info
+/src/mast-meter
+/src/mast-sap-client
+/src/mast-sap-server
+/src/mast-recorder
+
+/tests/*_check_*.c
+/tests/*_check_*.cmd
